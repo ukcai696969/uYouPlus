@@ -132,31 +132,33 @@ jobs:
           YOUTUBE_URL: ${{ inputs.decrypted_youtube_url }}
 
       - name: Fix compiling & Build Package
-      id: build_package
-      run: |
-         mkdir -p theos/lib/iphone/rootless
-         cd ${{ github.workspace }}/main
+        id: build_package
+        run: |
+          mkdir -p theos/lib/iphone/rootless
+          cd ${{ github.workspace }}/main
 
-         echo "=== Finding Settings.x ==="
-         find . -type f \( -name "Settings.x" -o -name "TweakSettings.x" \) -print
+          sed -i '' 's/%orig\.mutableCopy/\[%orig mutableCopy\]/g' Tweaks/Return-YouTube-Dislikes/Settings.x
 
-         echo "=== Finding GroupDataSortedCategories ==="
-         grep -R "GroupDataSortedCategories" . --exclude-dir=.git --exclude-dir=.theos || true
+          echo "=== Finding Settings.x ==="
+          find . -type f \( -name "Settings.x" -o -name "TweakSettings.x" \) -print
 
-         echo "=== Checking Makefile for Settings.x ==="
-         grep -n "Settings.x" Makefile || true
+          echo "=== Finding GroupDataSortedCategories ==="
+          grep -R "GroupDataSortedCategories" . --exclude-dir=.git --exclude-dir=.theos || true
 
-         sed -i '' "27s#.*#BUNDLE_ID = ${{ env.BUNDLE_ID }}#g" Makefile
-         sed -i '' "26s#.*#DISPLAY_NAME = ${{ env.APP_NAME }}#g" Makefile
+          echo "=== Checking Makefile for Settings.x ==="
+          grep -n "Settings.x" Makefile || true
 
-         make package THEOS_PACKAGE_SCHEME=rootless IPA=Payload/YouTube.app FINALPACKAGE=1
+          sed -i '' "27s#.*#BUNDLE_ID = ${{ env.BUNDLE_ID }}#g" Makefile
+          sed -i '' "26s#.*#DISPLAY_NAME = ${{ env.APP_NAME }}#g" Makefile
 
-         echo "package=$(ls -t packages | head -n1)" >> $GITHUB_OUTPUT
+          make package THEOS_PACKAGE_SCHEME=rootless IPA=Payload/YouTube.app FINALPACKAGE=1
 
-         echo -e "==> \033[1mSHASUM256: $(shasum -a 256 packages/*.ipa | cut -f1 -d' ')\033[0m"
-         echo -e "==> \033[1mBundle ID: ${{ env.BUNDLE_ID }}\033[0m"
+          echo "package=$(ls -t packages | head -n1)" >> $GITHUB_OUTPUT
 
-      env:
+          echo -e "==> \033[1mSHASUM256: $(shasum -a 256 packages/*.ipa | cut -f1 -d' ')\033[0m"
+          echo -e "==> \033[1mBundle ID: ${{ env.BUNDLE_ID }}\033[0m"
+
+        env:
           THEOS: ${{ github.workspace }}/theos
           UYOU_VERSION: ${{ inputs.uyou_version }}
           UYOU_URL: ${{ inputs.uyou_url }}
