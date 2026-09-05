@@ -156,7 +156,7 @@ jobs:
          echo -e "==> \033[1mSHASUM256: $(shasum -a 256 packages/*.ipa | cut -f1 -d' ')\033[0m"
          echo -e "==> \033[1mBundle ID: ${{ env.BUNDLE_ID }}\033[0m"
 
-        env:
+      env:
           THEOS: ${{ github.workspace }}/theos
           UYOU_VERSION: ${{ inputs.uyou_version }}
           UYOU_URL: ${{ inputs.uyou_url }}
