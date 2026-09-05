@@ -137,8 +137,6 @@ jobs:
           mkdir -p theos/lib/iphone/rootless
           cd ${{ github.workspace }}/main
 
-          sed -i '' 's/%orig\.mutableCopy/\[%orig mutableCopy\]/g' Tweaks/Return-YouTube-Dislikes/Settings.x
-
           echo "=== Finding Settings.x ==="
           find . -type f \( -name "Settings.x" -o -name "TweakSettings.x" \) -print
 
